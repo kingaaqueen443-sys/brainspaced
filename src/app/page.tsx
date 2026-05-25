@@ -13,6 +13,17 @@ import { CalendarView } from "@/components/CalendarView";
 import { Heatmap } from "@/components/Heatmap";
 import { Download, Upload, LogOut, Moon, Sun, Bell, RotateCcw } from "lucide-react";
 
+const MOTIVATIONAL_QUOTES = [
+  "Building long-term memory, one step at a time.",
+  "Consistency is the companion of mastery.",
+  "Your future self will thank you for today's focus.",
+  "Small daily steps lead to massive long-term gains.",
+  "Mastery isn't an act, it's a habit.",
+  "The secret to a great memory is consistent recall.",
+  "Deep focus is the superpower of the 21st century.",
+  "Knowledge compounds just like interest."
+];
+
 export default function Home() {
   const { items, isLoaded, addItem, updateItem, deleteItem, toggleReview, setItems } = useStudyData();
   const [activeTab, setActiveTab] = useState<"today" | "all" | "stats" | "settings">("today");
@@ -112,7 +123,9 @@ export default function Home() {
   const todayReviews = getTodayReviews();
 
   const getMotivationalMessage = () => {
-    return "Building long-term memory, one step at a time.";
+    // We can use a deterministic random based on the date so it's a "Daily Quote"
+    const dayOfYear = Math.floor((new Date().getTime() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
+    return MOTIVATIONAL_QUOTES[dayOfYear % MOTIVATIONAL_QUOTES.length];
   };
 
   const handleExport = () => {
@@ -189,7 +202,7 @@ export default function Home() {
           className="mb-10 p-6 rounded-[2rem] bg-white/[0.02] border border-white/[0.05] relative overflow-hidden group"
         >
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-500/[0.03] to-purple-500/[0.03] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-          <h2 className="text-xl font-medium tracking-tight mb-2 text-zinc-100 italic">"Your memory compounds daily."</h2>
+          <h2 className="text-xl font-medium tracking-tight mb-2 text-zinc-100 italic">"{getMotivationalMessage()}"</h2>
           <div className="flex items-center gap-3">
             <div className="flex gap-1">
               {[1, 2, 3].map(i => (
@@ -553,8 +566,12 @@ function SubjectCard({ item, onToggleReview, onDelete }: { item: StudyItem, onTo
         {/* Connection Line */}
         <div className="absolute top-7 left-10 right-10 h-[2px] bg-white/[0.03] overflow-hidden">
           <motion.div 
-            className="h-full bg-gradient-to-r from-transparent via-current to-transparent"
-            style={{ color: theme.color, width: `${item.progress}%` }}
+            className="h-full bg-gradient-to-r from-transparent via-current to-transparent transition-all duration-1000"
+            style={{ 
+              color: theme.color, 
+              width: `${item.progress}%`,
+              boxShadow: `0 0 15px ${theme.color}`
+            } as any}
             initial={{ width: 0 }}
             animate={{ width: `${item.progress}%` }}
             transition={{ duration: 1.5, ease: "circOut" }}

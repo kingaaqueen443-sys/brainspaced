@@ -1,3 +1,4 @@
+import React, { useState, useMemo } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday, parseISO, startOfWeek, endOfWeek, addMonths, subMonths } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -10,7 +11,7 @@ interface CalendarViewProps {
 }
 
 export function CalendarView({ items }: CalendarViewProps) {
-  const [currentDate, setCurrentDate] = React.useState(new Date());
+  const [currentDate, setCurrentDate] = useState(new Date());
   
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(monthStart);
