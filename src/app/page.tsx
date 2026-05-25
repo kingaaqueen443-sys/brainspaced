@@ -276,12 +276,12 @@ export default function Home() {
               </div>
               
               {todayReviews.length === 0 ? (
-                <div className="p-16 text-center glass rounded-[2.5rem] border-dashed flex flex-col items-center justify-center bg-white/[0.01]">
-                   <div className="w-20 h-20 rounded-full bg-blue-500/5 flex items-center justify-center mb-6 animate-pulse">
-                     <Check className="text-blue-500/40 w-10 h-10" />
+                <div className="p-20 text-center rounded-[3rem] border border-white/5 flex flex-col items-center justify-center bg-white/[0.01]">
+                   <div className="w-20 h-20 rounded-full bg-green-500/5 flex items-center justify-center mb-6">
+                     <Check className="text-green-500/40 w-10 h-10" />
                    </div>
-                   <h3 className="text-zinc-300 text-lg font-bold mb-2">Rest Phase</h3>
-                   <p className="text-zinc-500 text-sm max-w-[200px]">Your long-term memory is currently consolidating foundations.</p>
+                   <h3 className="text-zinc-200 text-xl font-black mb-2">Focused & Clear</h3>
+                   <p className="text-zinc-500 text-sm max-w-[240px]">You've completed all reviews for today. Your long-term memory is compounding.</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -457,75 +457,73 @@ function ReviewItem({ item, review, onToggle }: { item: StudyItem, review: Revie
   return (
     <motion.div 
       layout
-      style={{ '--theme-glow': theme.glow, '--theme-primary': theme.color } as any}
       className={cn(
-        "premium-card p-5 rounded-[2.2rem] flex items-center justify-between group transition-all duration-500 overflow-hidden relative",
-        isOverdue ? "border-orange-500/30 bg-orange-500/[0.03]" : "hover:border-white/20"
+        "group relative p-6 rounded-[2.5rem] bg-white/[0.02] border border-white/5 transition-all duration-500",
+        isOverdue ? "border-orange-500/20 bg-orange-500/[0.02]" : "hover:border-white/10"
       )}
-      whileHover={{ y: -4, scale: 1.01 }}
+      whileHover={{ y: -2 }}
     >
-      {/* Background Glow on Hover */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-5">
+          <motion.button 
+            onClick={onToggle}
+            className={cn(
+              "w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 border",
+              review.isCompleted 
+                ? "bg-green-500 border-transparent shadow-[0_0_20px_rgba(34,197,94,0.3)]" 
+                : isOverdue 
+                ? "bg-orange-500/10 border-orange-500/30 text-orange-500 hover:bg-orange-500/20"
+                : "bg-white/5 border-white/10 text-zinc-400 hover:border-white/30"
+            )}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {review.isCompleted ? (
+              <Check className="text-white w-6 h-6 stroke-[3]" />
+            ) : (
+              <div className="flex flex-col items-center">
+                <div className="text-[10px] font-black">{INTERVALS[review.order]}</div>
+              </div>
+            )}
+          </motion.button>
 
-      <div className="flex items-center gap-6 relative z-10">
-        <motion.button 
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+               <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded bg-white/5 border border-white/10" style={{ color: theme.color }}>{theme.name}</span>
+               {isOverdue && (
+                 <span className="text-[9px] font-black uppercase tracking-widest text-orange-400">Overdue</span>
+               )}
+            </div>
+            <h4 className="font-bold text-zinc-100 text-lg leading-tight">{item.subject}</h4>
+            <div className="flex items-center gap-3 mt-1">
+              <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider flex items-center gap-1">
+                <Calendar className="w-3 h-3" /> {format(parseISO(review.date), "MMMM d")}
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <button 
           onClick={onToggle}
           className={cn(
-            "w-16 h-16 rounded-[1.8rem] flex items-center justify-center transition-all duration-700 border relative overflow-hidden group/btn",
+            "px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
             review.isCompleted 
-              ? "border-transparent shadow-[0_0_25px_-5px_var(--theme-glow)]" 
-              : isOverdue 
-              ? "bg-orange-500/5 border-orange-500/20"
-              : "bg-white/[0.03] border-white/[0.08] hover:border-white/20"
+              ? "bg-green-500/10 text-green-500 border border-green-500/20"
+              : "bg-white/5 text-zinc-500 border border-white/10 hover:bg-white/10 hover:text-white"
           )}
-          style={{ background: review.isCompleted ? theme.color : undefined }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
         >
-          {review.isCompleted ? (
-            <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
-              <Check className="text-white w-8 h-8 stroke-[3]" />
-            </motion.div>
-          ) : (
-             <div className="flex flex-col items-center">
-               {isOverdue ? <Clock className="text-orange-500 w-6 h-6 mb-0.5 animate-pulse" /> : <Clock className="text-zinc-500 group-hover/btn:text-zinc-300 w-6 h-6 mb-0.5 transition-colors" />}
-               <span className="text-[8px] font-black uppercase text-zinc-500 group-hover/btn:text-zinc-400">Day {INTERVALS[review.order]}</span>
-             </div>
-          )}
-          
-          {/* Active Pulse for Available */}
-          {!review.isCompleted && !isOverdue && (
-            <div className="absolute inset-0 rounded-full bg-white/5 animate-ping opacity-20 pointer-events-none" />
-          )}
-        </motion.button>
-
-        <div>
-          <div className="flex items-center gap-2 mb-1.5">
-             <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: theme.color }} />
-             <span className="text-[9px] font-black uppercase tracking-[0.2em] opacity-60" style={{ color: theme.color }}>{theme.name}</span>
-             {isOverdue && (
-               <span className="text-[10px] font-black uppercase tracking-widest text-orange-400 bg-orange-400/10 px-2 py-0.5 rounded-md flex items-center gap-1">
-                 <Zap className="w-2.5 h-2.5 fill-orange-400" /> Overdue
-               </span>
-             )}
-          </div>
-          <h4 className="font-black text-zinc-100 text-lg leading-tight mb-0.5">{item.subject}</h4>
-          <p className="text-[11px] text-zinc-500 font-medium uppercase tracking-wider flex items-center gap-2">
-            {isOverdue ? "Priority Attention Required" : "Ready for focus session"}
-          </p>
-        </div>
-      </div>
-      <div className="pr-2 relative z-10">
-        <div className="w-10 h-10 rounded-full border border-white/[0.05] flex items-center justify-center group-hover:bg-white/[0.05] transition-all">
-          <ChevronRight className="text-zinc-700 group-hover:text-zinc-400 transition-all group-hover:translate-x-0.5" strokeWidth={3} />
-        </div>
+          {review.isCompleted ? "Completed" : "Mark Done"}
+        </button>
       </div>
     </motion.div>
   );
 }
 
 function SubjectCard({ item, onToggleReview, onDelete }: { item: StudyItem, onToggleReview: (iid: string, rid: string) => void, onDelete: () => void }) {
+  const [isExpanded, setIsExpanded] = useState(false);
   const theme = THEMES[item.category];
+  
+  const stageLabels = ["Start", "Day 1", "Day 3", "Day 7", "Day 14", "Day 30"];
   
   return (
     <motion.div 
@@ -541,13 +539,33 @@ function SubjectCard({ item, onToggleReview, onDelete }: { item: StudyItem, onTo
       <div className="absolute top-[-20%] right-[-10%] w-64 h-64 blur-[100px] rounded-full pointer-events-none opacity-20" style={{ background: theme.color }} />
       <div className="absolute bottom-[-20%] left-[-10%] w-48 h-48 blur-[80px] rounded-full pointer-events-none opacity-10" style={{ background: theme.color }} />
 
-      <div className="flex justify-between items-start mb-12 relative z-10">
-        <div>
+      <div className="flex justify-between items-start mb-8 relative z-10">
+        <div className="flex-1">
           <div className="flex items-center gap-2 mb-3">
              <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-[0.3em]" style={{ color: theme.color }}>{theme.name} JOURNEY</div>
           </div>
-          <h3 className="text-3xl font-black mb-3 tracking-tight group-hover:translate-x-1 transition-transform">{item.subject}</h3>
-          <p className="text-sm text-zinc-500 font-medium max-w-[280px] leading-relaxed italic opacity-80">{item.note || "A journey to mastery through consistency."}</p>
+          <h3 className="text-3xl font-black mb-3 tracking-tight">{item.subject}</h3>
+          
+          <AnimatePresence>
+            {isExpanded && (
+              <motion.p 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 0.8, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="text-sm text-zinc-400 font-medium max-w-[280px] leading-relaxed italic mb-4 overflow-hidden"
+              >
+                {item.note || "A journey to mastery through consistency."}
+              </motion.p>
+            )}
+          </AnimatePresence>
+          
+          <button 
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white transition-colors"
+          >
+            {isExpanded ? "Collapse" : "Expand Details"}
+            <ChevronRight className={cn("w-3 h-3 transition-transform", isExpanded ? "rotate-90" : "")} />
+          </button>
         </div>
         <div className="flex flex-col items-end">
            <div className="text-5xl font-black tracking-tighter transition-all flex items-baseline gap-1" style={{ color: theme.color }}>
@@ -555,16 +573,20 @@ function SubjectCard({ item, onToggleReview, onDelete }: { item: StudyItem, onTo
              <span className="text-xl opacity-40 font-bold">%</span>
            </div>
            <span className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-black mt-1">Foundational Mastery</span>
-           <button onClick={onDelete} className="mt-6 p-2.5 rounded-full bg-white/5 border border-white/10 text-zinc-600 hover:text-red-400 hover:bg-red-400/10 hover:border-red-400/20 transition-all opacity-0 group-hover:opacity-100">
-             <Trash2 className="w-5 h-5" />
-           </button>
+            <button onClick={onDelete} className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-zinc-600 hover:text-red-400 hover:bg-red-400/10 hover:border-red-400/20 transition-all">
+              <Trash2 className="w-5 h-5" />
+            </button>
         </div>
       </div>
 
-      {/* Connected Memory Timeline */}
-      <div className="relative z-10 px-2 mt-4">
+      {/* Connected Memory Timeline - Expanded Labels */}
+      <div className="relative z-10 px-1 mt-6">
+        <div className="flex justify-between mb-4">
+          <span className="text-[10px] font-black uppercase tracking-wider text-zinc-600">Spaced Repetition Journey</span>
+          <span className="text-[10px] font-black uppercase tracking-wider text-zinc-400">{item.progress}% Completed</span>
+        </div>
         {/* Connection Line */}
-        <div className="absolute top-7 left-10 right-10 h-[2px] bg-white/[0.03] overflow-hidden">
+        <div className="absolute top-[48px] left-6 right-6 h-[4px] bg-white/[0.03] rounded-full overflow-hidden">
           <motion.div 
             className="h-full bg-gradient-to-r from-transparent via-current to-transparent transition-all duration-1000"
             style={{ 
@@ -578,7 +600,7 @@ function SubjectCard({ item, onToggleReview, onDelete }: { item: StudyItem, onTo
           />
         </div>
 
-        <div className="grid grid-cols-6 gap-2">
+        <div className="grid grid-cols-6 gap-3 relative">
           {item.reviews.map((review, idx) => {
             const isTodayDate = isToday(parseISO(review.date));
             const isPastDate = isPast(parseISO(review.date));
@@ -587,60 +609,54 @@ function SubjectCard({ item, onToggleReview, onDelete }: { item: StudyItem, onTo
             const isOverdue = isPastDate && !isTodayDate && !review.isCompleted;
             
             return (
-              <div key={review.id} className="flex flex-col items-center gap-4 relative">
+              <div key={review.id} className="flex flex-col items-center gap-3 relative">
+                <div className="text-[8px] font-black text-zinc-500 uppercase tracking-widest mb-1">{stageLabels[idx]}</div>
                 <motion.button
-                  whileHover={isAvailable ? { scale: 1.15, y: -2 } : {}}
-                  whileTap={isAvailable ? { scale: 0.9 } : {}}
+                  whileHover={isAvailable ? { scale: 1.1, y: -2 } : {}}
+                  whileTap={isAvailable ? { scale: 0.95 } : {}}
                   onClick={() => isAvailable && onToggleReview(item.id, review.id)}
                   disabled={!isAvailable}
                   className={cn(
-                    "w-full aspect-square rounded-[1.2rem] flex items-center justify-center transition-all duration-700 border relative overflow-hidden",
+                    "w-full aspect-square rounded-2xl flex items-center justify-center transition-all duration-500 border-2 relative overflow-hidden",
                     review.isCompleted 
-                      ? "border-transparent shadow-[0_10px_25px_-5px_var(--theme-glow)]" 
+                      ? "border-transparent shadow-[0_15px_30px_-10px_var(--theme-glow)]" 
                       : isOverdue
-                      ? "bg-orange-500/[0.08] border-orange-500/40"
+                      ? "bg-orange-500/[0.1] border-orange-500/40"
                       : isTodayDate
-                      ? "bg-white/10 border-white/30"
+                      ? "bg-white/10 border-white"
                       : isFutureDate
-                      ? "bg-white/[0.02] border-white/[0.05] opacity-40 glass"
-                      : "bg-white/[0.02] border-white/5 opacity-30"
+                      ? "bg-white/[0.02] border-white/[0.03] opacity-50"
+                      : "bg-white/[0.02] border-white/10 opacity-40"
                   )}
                   style={{ 
                     background: review.isCompleted ? theme.color : undefined,
-                    borderColor: isTodayDate ? theme.color : undefined
+                    borderColor: isTodayDate && !review.isCompleted ? theme.color : undefined
                   }}
                 >
                   {review.isCompleted ? (
-                    <Check className="w-5 h-5 text-white stroke-[4]" />
+                    <Check className="w-6 h-6 text-white stroke-[4]" />
                   ) : isFutureDate ? (
-                    <Lock className="w-4 h-4 text-zinc-700" />
+                    <Lock className="w-5 h-5 text-zinc-800" />
                   ) : (
-                    <span className="text-[10px] font-black opacity-40">{idx + 1}</span>
-                  )}
-
-                  {/* Completed Glow Border */}
-                  {review.isCompleted && (
-                    <div className="absolute inset-0 border border-white/20 rounded-[1.2rem]" />
+                    <div className="flex flex-col items-center">
+                      <span className="text-[12px] font-black">{idx + 1}</span>
+                    </div>
                   )}
 
                   {/* Urgent Pulse */}
-                  {isOverdue && (
+                  {isOverdue && !review.isCompleted && (
                     <div className="absolute inset-0 bg-orange-500/20 animate-pulse pointer-events-none" />
                   )}
-                  
-                  {/* Today Pulse */}
-                  {isTodayDate && !review.isCompleted && (
-                    <div className="absolute inset-0 bg-white/10 animate-pulse pointer-events-none" />
-                  )}
                 </motion.button>
-                <div className="flex flex-col items-center gap-0.5">
+
+                <div className="flex flex-col items-center gap-1">
                    <span className={cn(
-                     "text-[10px] font-black uppercase tracking-tight transition-colors",
-                     isTodayDate ? "text-white" : "text-zinc-600"
+                     "text-[10px] font-bold tracking-tight transition-colors",
+                     isTodayDate ? "text-blue-400" : isOverdue ? "text-orange-400" : "text-zinc-500"
                    )}>
-                     {format(parseISO(review.date), "dd/MM")}
+                     {format(parseISO(review.date), "MMM d")}
                    </span>
-                   {isTodayDate && <div className="w-1 h-1 rounded-full bg-white" />}
+                   {isTodayDate && <div className="w-1.5 h-1.5 rounded-full bg-blue-400" />}
                 </div>
               </div>
             );
