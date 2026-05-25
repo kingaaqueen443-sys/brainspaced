@@ -2,7 +2,7 @@ import React from 'react';
 import { format, subDays, eachDayOfInterval, parseISO, isSameDay } from 'date-fns';
 import { StudyItem } from '@/types';
 import { THEMES } from '@/lib/themes';
-import { motion, Tooltip } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 interface HeatmapProps {
   items: StudyItem[];
